@@ -102,7 +102,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <section class="calculator" id="calc">
 <div class="container">
 <div class="section-title"><h2>Ваша смета</h2><p>Заполните данные — калькулятор автоматически посчитает итог.</p></div>
-<div class="panel client-panel"><div class="panel-title">Данные заказчика и объекта</div><div class="grid"><div><label>Заказчик</label><input id="client" placeholder="Имя или компания" oninput="syncClient()"></div><div><label>Телефон</label><input id="phone" placeholder="+380..." oninput="syncClient()"></div><div><label>Объект</label><input id="object" placeholder="Квартира, дом, офис" oninput="syncClient()"></div><div><label>Адрес объекта</label><input id="address" placeholder="Адрес" oninput="syncClient()"></div></div></div>
+<div class="panel client-panel"><div class="panel-title">Данные заказчика и объекта</div><div class="grid"><div><label>Заказчик</label><input id="client" placeholder="Имя или компания" oninput="syncClient()"></div><div><label>Телефон</label><input id="phone" placeholder="+380..." oninput="syncClient()"></div><div><label>Объект</label><input id="object" placeholder="Квартира, дом, офис" oninput="syncClient()"></div><div><label>Адрес объекта</label><input id="address" placeholder="Адрес" oninput="syncClient()"></div><div><label>Скидка, %</label><input id="discount" type="number" min="0" max="100" value="0" oninput="syncDiscount()"></div></div></div>
 <div class="calc-grid">
 <div class="panel">
 <div class="panel-title">Комнаты</div>
@@ -139,7 +139,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <div class="sum-line"><span>Стены</span><b id="sumWalls">0 грн</b></div>
 <div class="sum-line"><span>Потолок</span><b id="sumCeiling">0 грн</b></div>
 <div class="sum-line"><span>Запас материалов</span><b id="sumReserve">0 грн</b></div>
-<div class="sum-line"><span>Работы и материалы</span><b id="sumItems">0 грн</b></div><div class="sum-line"><span>Комнат</span><b id="sumRooms">1</b></div>
+<div class="sum-line"><span>Работы и материалы</span><b id="sumItems">0 грн</b></div><div class="sum-line"><span>Скидка (<span id="discountLabel">0</span>%)</span><b id="sumDiscount">0 грн</b></div><div class="sum-line"><span>Комнат</span><b id="sumRooms">1</b></div>
 <div class="summary-actions"><button class="pdf" onclick="downloadPDF()">⇩ Скачать PDF-смету</button><button class="print" onclick="window.print()">▣ Распечатать</button><button class="secondary" onclick="saveEstimate()">💾 Сохранить смету</button></div><div id="saveStatus" class="muted" style="margin-top:10px;text-align:center"></div>
 </div>
 </div>
@@ -161,7 +161,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 </div></footer>
 
 <script>
-let rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}],active=0,last=null,client={name:'',phone:'',object:'',address:''};
+let rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}],active=0,last=null,discount=0,client={name:'',phone:'',object:'',address:''};
 const catalog=[
 {cat:'Демонтаж',name:'Демонтаж покрытий',unit:'м²',price:120},{cat:'Демонтаж',name:'Демонтаж плитки',unit:'м²',price:180},{cat:'Демонтаж',name:'Демонтаж перегородки',unit:'м²',price:350},
 {cat:'Черновые работы',name:'Шпаклёвка стен',unit:'м²',price:280},{cat:'Черновые работы',name:'Грунтовка',unit:'м²',price:95},{cat:'Черновые работы',name:'Стяжка пола',unit:'м²',price:320},
@@ -196,7 +196,7 @@ function loadRoom(){
  document.getElementById('name').value=r.name;document.getElementById('area').value=r.area;document.getElementById('floor').value=r.floor;document.getElementById('walls').value=r.walls;document.getElementById('ceiling').value=r.ceiling;document.getElementById('reserve').value=r.reserve;
  document.querySelectorAll('input[name="type"]').forEach(x=>x.checked=x.value===r.type);renderItems();
 }
-function renderItems(){const r=rooms[active];const el=document.getElementById('itemsList');if(!el)return;if(!r.items)r.items=[];el.innerHTML=r.items.length?r.items.map((it,i)=>'<div class="item-row"><select onchange="updateItem('+i+',this.value)">'+catalog.map(x=>'<option '+(x.name===it.name?'selected':'')+'>'+x.cat+' — '+x.name+'</option>').join('')+'</select><span class="item-unit">'+(it.unit||'шт.')+'</span><input type="number" min="0" step="0.01" value="'+it.qty+'" onchange="updateQty('+i+',this.value)"><input type="number" min="0" value="'+it.price+'" onchange="updatePrice('+i+',this.value)"><button class="remove-item" onclick="removeItem('+i+')">×</button></div>').join(''):'<div class="empty">Добавьте работы или материалы</div>'}
+function renderItems(){const r=rooms[active];const el=document.getElementById('itemsList');if(!el)return;if(!r.items)r.items=[];el.innerHTML=r.items.length?r.items.map((it,i)=>'<div class="item-row"><select onchange="updateItem('+i+',this.value)">'+catalog.map(x=>'<option value="'+esc(x.name)+'" '+(x.name===it.name?'selected':'')+'>'+x.cat+' — '+x.name+'</option>').join('')+'</select><span class="item-unit">'+(it.unit||'шт.')+'</span><input type="number" min="0" step="0.01" value="'+it.qty+'" onchange="updateQty('+i+',this.value)"><input type="number" min="0" value="'+it.price+'" onchange="updatePrice('+i+',this.value)"><button class="remove-item" onclick="removeItem('+i+')">×</button></div>').join(''):'<div class="empty">Добавьте работы или материалы</div>'}
 function addItem(){saveRoom();if(!rooms[active].items)rooms[active].items=[];rooms[active].items.push({name:catalog[0].name,unit:catalog[0].unit,qty:1,price:catalog[0].price});renderItems();calculate()}
 function updateItem(i,name){rooms[active].items[i].name=name;const x=catalog.find(v=>v.name===name);if(x){rooms[active].items[i].price=x.price;rooms[active].items[i].unit=x.unit}renderItems();calculate()}
 function updateQty(i,v){rooms[active].items[i].qty=+v||0;calculate()}
@@ -210,7 +210,7 @@ function calculate(){
  saveRoom();let total=0,floor=0,walls=0,ceiling=0,reserveSum=0,itemsSum=0;
  const lines=rooms.map(r=>{const m=multiplier(r.type),f=r.area*r.floor*m,w=r.area*r.walls*m,c=r.area*r.ceiling*m,sub=f+w+c,rs=sub*r.reserve/100,it=itemsTotal(r),t=sub+rs+it;floor+=f;walls+=w;ceiling+=c;reserveSum+=rs;itemsSum+=it;total+=t;return {...r,f,w,c,rs,it,t}});
  document.getElementById('total').textContent=money(total);document.getElementById('sumFloor').textContent=money(floor);document.getElementById('sumWalls').textContent=money(walls);document.getElementById('sumCeiling').textContent=money(ceiling);document.getElementById('sumReserve').textContent=money(reserveSum);document.getElementById('sumItems').textContent=money(itemsSum);
- last={lines,total,date:new Date().toLocaleDateString('ru-RU')};persist();return last;
+ const discountSum=total*(+discount||0)/100,grandTotal=total-discountSum;document.getElementById('sumDiscount').textContent=money(discountSum);document.getElementById('total').textContent=money(grandTotal);last={lines,total,discount,discountSum,grandTotal,date:new Date().toLocaleDateString('ru-RU')};persist();return last;
 }
 function estimateNumber(){const d=new Date();return 'KR-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'-'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')}
 function downloadPDF(){
@@ -230,15 +230,17 @@ function downloadPDF(){
  w.document.close();setTimeout(()=>w.print(),500)
 }
 function syncClient(){client={name:document.getElementById('client').value.trim(),phone:document.getElementById('phone').value.trim(),object:document.getElementById('object').value.trim(),address:document.getElementById('address').value.trim()};persist()}
+function syncDiscount(){discount=Math.max(0,Math.min(100,+document.getElementById('discount').value||0));document.getElementById('discountLabel').textContent=discount;calculate()}
+function loadDiscount(){const el=document.getElementById('discount');if(el)el.value=discount;const label=document.getElementById('discountLabel');if(label)label.textContent=discount}
 function loadClient(){document.getElementById('client').value=client.name||'';document.getElementById('phone').value=client.phone||'';document.getElementById('object').value=client.object||'';document.getElementById('address').value=client.address||''}
-function persist(){try{localStorage.setItem('repairCalculatorEstimate',JSON.stringify({rooms,active,client,savedAt:new Date().toISOString()}));}catch(e){}}
+function persist(){try{localStorage.setItem('repairCalculatorEstimate',JSON.stringify({rooms,active,client,discount,savedAt:new Date().toISOString()}));}catch(e){}}
 function saveEstimate(){saveRoom();calculate();persist();const el=document.getElementById('saveStatus');if(el){el.textContent='✓ Смета сохранена на этом устройстве';setTimeout(()=>el.textContent='',2500)}}
 function loadSavedEstimate(){
- try{const raw=localStorage.getItem('repairCalculatorEstimate');if(!raw){alert('Сохранённой сметы пока нет.');return}const data=JSON.parse(raw);if(!Array.isArray(data.rooms)||!data.rooms.length)throw new Error();rooms=data.rooms;client=data.client||{name:'',phone:'',object:'',address:''};active=Math.min(data.active||0,rooms.length-1);loadClient();loadRoom();renderRooms();calculate();document.getElementById('calc').scrollIntoView({behavior:'smooth'});}catch(e){alert('Не удалось восстановить смету.')}}
-function newEstimate(){if(!confirm('Начать новую смету? Текущая сохранённая смета останется доступна для восстановления.'))return;rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}];client={name:'',phone:'',object:'',address:''};active=0;loadClient();loadRoom();renderRooms();calculate();}
+ try{const raw=localStorage.getItem('repairCalculatorEstimate');if(!raw){alert('Сохранённой сметы пока нет.');return}const data=JSON.parse(raw);if(!Array.isArray(data.rooms)||!data.rooms.length)throw new Error();rooms=data.rooms;client=data.client||{name:'',phone:'',object:'',address:''};discount=+data.discount||0;active=Math.min(data.active||0,rooms.length-1);loadClient();loadDiscount();loadRoom();renderRooms();calculate();document.getElementById('calc').scrollIntoView({behavior:'smooth'});}catch(e){alert('Не удалось восстановить смету.')}}
+function newEstimate(){if(!confirm('Начать новую смету? Текущая сохранённая смета останется доступна для восстановления.'))return;rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}];client={name:'',phone:'',object:'',address:''};discount=0;active=0;loadClient();loadDiscount();loadRoom();renderRooms();calculate();}
 function resetAll(){rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}];active=0;loadRoom();renderRooms();calculate()}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-loadClient();loadRoom();renderRooms();calculate();
+loadClient();loadDiscount();loadRoom();renderRooms();calculate();
 </script>
 </body>
 </html>
