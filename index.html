@@ -58,11 +58,11 @@ input:focus,select:focus{border-color:#5fa9d5;box-shadow:0 0 0 3px #e4f3fb}
 .summary-actions{display:grid;gap:9px;margin-top:18px}.summary-actions button{width:100%;padding:13px;border-radius:10px;border:0;font-weight:800}
 .pdf{background:var(--navy);color:#fff}.print{background:#eaf0f4;color:var(--navy)}.calculate{background:var(--orange);color:#fff}
 .bottom-actions{display:flex;gap:10px;margin-top:18px}.saved{padding:18px 0 0}.saved-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:15px;box-shadow:var(--shadow)}.saved-box span{display:block;color:var(--muted);font-size:13px;margin-top:3px}.bottom-actions button{flex:1;border:0;border-radius:10px;padding:13px;font-weight:800}
-.why{padding:20px 0 60px}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.why-card{text-align:center;padding:20px}.why-card .big{font-size:28px}.why-card b{display:block;margin:8px 0 5px}.why-card span{font-size:13px;color:var(--muted)}
+.builder-gallery{padding:10px 0 55px}.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.gallery-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.gallery-card img{width:100%;height:210px;object-fit:cover;display:block}.gallery-card div{padding:14px 16px}.gallery-card b{display:block}.gallery-card span{color:var(--muted);font-size:13px}.why{padding:20px 0 60px}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.why-card{text-align:center;padding:20px}.why-card .big{font-size:28px}.why-card b{display:block;margin:8px 0 5px}.why-card span{font-size:13px;color:var(--muted)}
 footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:flex;justify-content:space-between;gap:30px;align-items:center}.foot .brand{color:#fff}.foot .brand span{color:#aac4d4}.copy{border-top:1px solid rgba(255,255,255,.15);margin-top:25px;padding-top:18px;font-size:12px;color:#9bb4c4}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:15px}
 @media(max-width:980px){.calc-grid{grid-template-columns:220px 1fr}.summary{grid-column:1/-1}.hero-grid{grid-template-columns:1fr}.hero-card{display:none}.why-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.navlinks{display:none}.features{grid-template-columns:1fr;margin-top:18px}.hero{padding-top:40px}.hero h1{font-size:37px}.calc-grid{grid-template-columns:1fr}.summary{grid-column:auto}.grid{grid-template-columns:1fr}.why-grid{grid-template-columns:1fr 1fr}.foot{flex-direction:column;align-items:flex-start}}
+@media(max-width:700px){.gallery-grid{grid-template-columns:1fr}.navlinks{display:none}.features{grid-template-columns:1fr;margin-top:18px}.hero{padding-top:40px}.hero h1{font-size:37px}.calc-grid{grid-template-columns:1fr}.summary{grid-column:auto}.grid{grid-template-columns:1fr}.why-grid{grid-template-columns:1fr 1fr}.foot{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -145,7 +145,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 </div>
 </section>
 
-<section class="why" id="about"><div class="container">
+<section class="builder-gallery"><div class="container"><div class="section-title"><h2>Профессиональный ремонт</h2><p>Реальные рабочие процессы — от черновых работ до чистовой отделки.</p></div><div class="gallery-grid"><div class="gallery-card"><img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=800&q=85" alt="Строитель выполняет ремонтные работы"><div><b>Работа на объекте</b><span>Аккуратность и контроль каждого этапа.</span></div></div><div class="gallery-card"><img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=85" alt="Строительная команда на объекте"><div><b>Командная работа</b><span>Планируйте бюджет всей бригадой.</span></div></div><div class="gallery-card"><img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=85" alt="Строитель на ремонте"><div><b>От сметы до результата</b><span>Все работы и материалы в одном расчёте.</span></div></div></div></div></section>\n\n<section class="why" id="about"><div class="container">
 <div class="section-title"><h2>Почему удобно</h2><p>Минимум действий — максимум понятности.</p></div>
 <div class="why-grid">
 <div class="why-card"><div class="big">🏠</div><b>Несколько комнат</b><span>Считайте квартиру целиком.</span></div>
