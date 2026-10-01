@@ -29,7 +29,7 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .eyebrow{color:var(--orange);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:1.2px}
 h1{font-size:48px;line-height:1.08;margin:12px 0 18px;letter-spacing:-1.5px}
 .hero p{font-size:19px;color:var(--muted);max-width:590px;margin:0 0 26px}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.hero-trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px}.trust-item{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:700}.trust-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px #fff1df}.hero-card-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:8px 11px;border-radius:999px;font-size:12px;font-weight:800}.hero-card-badge:before{content:"✓";display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--orange);color:#fff}.summary{position:sticky;top:94px}
 .primary{background:var(--orange);padding:14px 22px}.secondary{border:0;background:#e8f0f5;color:var(--navy);border-radius:11px;padding:14px 22px;font-weight:700}
 .hero-card{min-height:300px;border-radius:28px;background:linear-gradient(145deg,var(--navy),#156e9f);padding:28px;color:#fff;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .hero-card:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-90px;background:rgba(255,255,255,.09)}
@@ -61,7 +61,7 @@ input:focus,select:focus{border-color:#5fa9d5;box-shadow:0 0 0 3px #e4f3fb}
 .builder-gallery{padding:10px 0 55px}.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.gallery-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.gallery-card img{width:100%;height:210px;object-fit:cover;display:block}.gallery-card div{padding:14px 16px}.gallery-card b{display:block}.gallery-card span{color:var(--muted);font-size:13px}.why{padding:20px 0 60px}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.why-card{text-align:center;padding:20px}.why-card .big{font-size:28px}.why-card b{display:block;margin:8px 0 5px}.why-card span{font-size:13px;color:var(--muted)}
 footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:flex;justify-content:space-between;gap:30px;align-items:center}.foot .brand{color:#fff}.foot .brand span{color:#aac4d4}.copy{border-top:1px solid rgba(255,255,255,.15);margin-top:25px;padding-top:18px;font-size:12px;color:#9bb4c4}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:15px}
-@media(max-width:980px){.calc-grid{grid-template-columns:220px 1fr}.summary{grid-column:1/-1}.hero-grid{grid-template-columns:1fr}.hero-card{display:none}.why-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){.calc-grid{grid-template-columns:220px 1fr}.summary{grid-column:1/-1;position:static}.hero-grid{grid-template-columns:1fr}.hero-card{display:none}.why-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.gallery-grid{grid-template-columns:1fr}.navlinks{display:none}.features{grid-template-columns:1fr;margin-top:18px}.hero{padding-top:40px}.hero h1{font-size:37px}.calc-grid{grid-template-columns:1fr}.summary{grid-column:auto}.grid{grid-template-columns:1fr}.why-grid{grid-template-columns:1fr 1fr}.foot{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
@@ -85,9 +85,9 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <div class="eyebrow">Онлайн-сервис для ремонта</div>
 <h1>Рассчитайте стоимость ремонта за несколько минут</h1>
 <p>Добавьте комнаты, укажите цены материалов и получите понятную смету с итоговой стоимостью.</p>
-<div class="hero-actions"><button class="primary" onclick="document.getElementById('calc').scrollIntoView()">Начать расчёт →</button><button class="secondary" onclick="addRoom();document.getElementById('calc').scrollIntoView()">+ Добавить комнату</button></div>
+<div class="hero-actions"><button class="primary" onclick="document.getElementById('calc').scrollIntoView({behavior:'smooth'})">Начать расчёт →</button><button class="secondary" onclick="addRoom();document.getElementById('calc').scrollIntoView({behavior:'smooth'})">+ Добавить комнату</button></div><div class="hero-trust"><div class="trust-item"><i class="trust-dot"></i>Без регистрации</div><div class="trust-item"><i class="trust-dot"></i>Сохранение на устройстве</div><div class="trust-item"><i class="trust-dot"></i>PDF за один клик</div></div>
 </div>
-<div class="hero-card"><img class="builder-photo" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=85" alt="Строители на объекте"><h2>Ваш ремонт под контролем</h2><p>Планируйте работы, материалы и бюджет в одной понятной смете.</p></div>
+<div class="hero-card"><div class="hero-card-badge">Готовая коммерческая смета</div><img class="builder-photo" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=85" alt="Строители на объекте"><h2>Ваш ремонт под контролем</h2><p>Планируйте работы, материалы и бюджет в одной понятной смете.</p></div>
 </div>
 </section>
 
