@@ -53,7 +53,7 @@ input:focus,select:focus{border-color:#5fa9d5;box-shadow:0 0 0 3px #e4f3fb}
 .type-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.type-row label{margin:0}
 .type-row input{display:none}.type-row span{display:block;text-align:center;padding:12px 5px;background:#f2f6f8;border:1px solid transparent;border-radius:10px;font-size:12px;cursor:pointer}
 .type-row input:checked+span{border-color:#65add7;background:#eaf6fd;color:var(--navy);font-weight:800}
-.surface{margin-top:20px}.surface h4{margin:0 0 10px}.surface-row{display:grid;grid-template-columns:1fr 130px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid #edf2f5;font-size:14px}.surface-row span{color:var(--muted)}
+.items-panel{margin-top:20px}.item-row{display:grid;grid-template-columns:1fr 90px 110px 42px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #edf2f5}.item-row input{padding:9px}.remove-item{border:0;background:#fff0f0;color:#b33;border-radius:8px;padding:9px}.add-item{border:0;background:#eaf5fb;color:var(--navy);border-radius:9px;padding:10px 12px;font-weight:800;margin-top:10px}.empty{color:var(--muted);font-size:13px;padding:10px 0}.surface{margin-top:20px}.surface h4{margin:0 0 10px}.surface-row{display:grid;grid-template-columns:1fr 130px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid #edf2f5;font-size:14px}.surface-row span{color:var(--muted)}
 .summary .sum-total{font-size:34px;font-weight:900;color:var(--navy);margin:5px 0 20px}.sum-line{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}.sum-line span{color:var(--muted)}
 .summary-actions{display:grid;gap:9px;margin-top:18px}.summary-actions button{width:100%;padding:13px;border-radius:10px;border:0;font-weight:800}
 .pdf{background:var(--navy);color:#fff}.print{background:#eaf0f4;color:var(--navy)}.calculate{background:var(--orange);color:#fff}
@@ -121,7 +121,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <label><input type="radio" name="type" value="standard" onchange="syncRoom()"><span>Стандартный</span></label>
 <label><input type="radio" name="type" value="premium" onchange="syncRoom()"><span>Премиум</span></label>
 </div></div>
-<div class="surface"><h4>Стоимость материалов</h4>
+<div class="items-panel"><h4>Работы и материалы</h4><div id="itemsList"></div><button class="add-item" onclick="addItem()">＋ Добавить позицию</button></div><div class="surface"><h4>Стоимость материалов</h4>
 <div class="surface-row"><span>Пол, грн/м²</span><input id="floor" type="number" min="0" value="600" oninput="syncRoom()"></div>
 <div class="surface-row"><span>Стены, грн/м²</span><input id="walls" type="number" min="0" value="450" oninput="syncRoom()"></div>
 <div class="surface-row"><span>Потолок, грн/м²</span><input id="ceiling" type="number" min="0" value="300" oninput="syncRoom()"></div>
@@ -138,7 +138,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <div class="sum-line"><span>Стены</span><b id="sumWalls">0 грн</b></div>
 <div class="sum-line"><span>Потолок</span><b id="sumCeiling">0 грн</b></div>
 <div class="sum-line"><span>Запас материалов</span><b id="sumReserve">0 грн</b></div>
-<div class="sum-line"><span>Комнат</span><b id="sumRooms">1</b></div>
+<div class="sum-line"><span>Работы и материалы</span><b id="sumItems">0 грн</b></div><div class="sum-line"><span>Комнат</span><b id="sumRooms">1</b></div>
 <div class="summary-actions"><button class="pdf" onclick="downloadPDF()">⇩ Скачать PDF-смету</button><button class="print" onclick="window.print()">▣ Распечатать</button><button class="secondary" onclick="saveEstimate()">💾 Сохранить смету</button></div><div id="saveStatus" class="muted" style="margin-top:10px;text-align:center"></div>
 </div>
 </div>
@@ -160,7 +160,8 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 </div></footer>
 
 <script>
-let rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10}],active=0,last=null;
+let rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}],active=0,last=null;
+const catalog=[{name:'Ламинат',price:850},{name:'Плитка',price:900},{name:'Обои',price:220},{name:'Краска',price:280},{name:'Шпаклёвка',price:35},{name:'Грунтовка',price:95},{name:'Плинтус',price:120},{name:'Электрика',price:2500},{name:'Сантехника',price:4500},{name:'Монтаж пола',price:350},{name:'Шпаклёвка стен',price:280},{name:'Покраска стен',price:220},{name:'Укладка плитки',price:500},{name:'Монтаж потолка',price:400}];
 
 function money(n){return Math.round(n).toLocaleString('ru-RU')+' грн'}
 function multiplier(t){return {basic:.85,standard:1,premium:1.35}[t]||1}
@@ -186,21 +187,28 @@ function loadRoom(){
  const r=rooms[active];if(!r)return;
  document.getElementById('roomTitle').textContent=r.name||('Комната '+(active+1));document.getElementById('roomNumber').textContent='№ '+(active+1);
  document.getElementById('name').value=r.name;document.getElementById('area').value=r.area;document.getElementById('floor').value=r.floor;document.getElementById('walls').value=r.walls;document.getElementById('ceiling').value=r.ceiling;document.getElementById('reserve').value=r.reserve;
- document.querySelectorAll('input[name="type"]').forEach(x=>x.checked=x.value===r.type);
+ document.querySelectorAll('input[name="type"]').forEach(x=>x.checked=x.value===r.type);renderItems();
 }
-function syncRoom(){saveRoom();document.getElementById('roomTitle').textContent=rooms[active].name;renderRooms();calculate()}
-function addRoom(){saveRoom();rooms.push({name:'Комната '+(rooms.length+1),area:15,type:'standard',floor:600,walls:450,ceiling:300,reserve:10});active=rooms.length-1;loadRoom();renderRooms();calculate()}
+function renderItems(){const r=rooms[active];const el=document.getElementById('itemsList');if(!el)return;if(!r.items)r.items=[];el.innerHTML=r.items.length?r.items.map((it,i)=>'<div class="item-row"><select onchange="updateItem('+i+',this.value)">'+catalog.map(x=>'<option '+(x.name===it.name?'selected':'')+'>'+x.name+'</option>').join('')+'</select><input type="number" min="0" value="'+it.qty+'" onchange="updateQty('+i+',this.value)"><input type="number" min="0" value="'+it.price+'" onchange="updatePrice('+i+',this.value)"><button class="remove-item" onclick="removeItem('+i+')">×</button></div>').join(''):'<div class="empty">Добавьте работы или материалы</div>'}
+function addItem(){saveRoom();if(!rooms[active].items)rooms[active].items=[];rooms[active].items.push({name:catalog[0].name,qty:1,price:catalog[0].price});renderItems();calculate()}
+function updateItem(i,name){rooms[active].items[i].name=name;const x=catalog.find(v=>v.name===name);if(x)rooms[active].items[i].price=x.price;renderItems();calculate()}
+function updateQty(i,v){rooms[active].items[i].qty=+v||0;calculate()}
+function updatePrice(i,v){rooms[active].items[i].price=+v||0;calculate()}
+function removeItem(i){rooms[active].items.splice(i,1);renderItems();calculate()}
+function itemsTotal(r){return (r.items||[]).reduce((s,it)=>s+(+it.qty||0)*(+it.price||0),0)}
+function syncRoom(){saveRoom();document.getElementById('roomTitle').textContent=rooms[active].name;renderRooms();renderItems();calculate()}
+function addRoom(){saveRoom();rooms.push({name:'Комната '+(rooms.length+1),area:15,type:'standard',floor:600,walls:450,ceiling:300,reserve:10,items:[]});active=rooms.length-1;loadRoom();renderRooms();calculate()}
 function removeRoom(i){if(rooms.length===1)return;if(i===active)active=Math.max(0,active-1);rooms.splice(i,1);loadRoom();renderRooms();calculate()}
 function calculate(){
- saveRoom();let total=0,floor=0,walls=0,ceiling=0,reserveSum=0;
- const lines=rooms.map(r=>{const m=multiplier(r.type),f=r.area*r.floor*m,w=r.area*r.walls*m,c=r.area*r.ceiling*m,sub=f+w+c,rs=sub*r.reserve/100,t=sub+rs;floor+=f;walls+=w;ceiling+=c;reserveSum+=rs;total+=t;return {...r,f,w,c,rs,t}});
- document.getElementById('total').textContent=money(total);document.getElementById('sumFloor').textContent=money(floor);document.getElementById('sumWalls').textContent=money(walls);document.getElementById('sumCeiling').textContent=money(ceiling);document.getElementById('sumReserve').textContent=money(reserveSum);
+ saveRoom();let total=0,floor=0,walls=0,ceiling=0,reserveSum=0,itemsSum=0;
+ const lines=rooms.map(r=>{const m=multiplier(r.type),f=r.area*r.floor*m,w=r.area*r.walls*m,c=r.area*r.ceiling*m,sub=f+w+c,rs=sub*r.reserve/100,it=itemsTotal(r),t=sub+rs+it;floor+=f;walls+=w;ceiling+=c;reserveSum+=rs;itemsSum+=it;total+=t;return {...r,f,w,c,rs,it,t}});
+ document.getElementById('total').textContent=money(total);document.getElementById('sumFloor').textContent=money(floor);document.getElementById('sumWalls').textContent=money(walls);document.getElementById('sumCeiling').textContent=money(ceiling);document.getElementById('sumReserve').textContent=money(reserveSum);document.getElementById('sumItems').textContent=money(itemsSum);
  last={lines,total,date:new Date().toLocaleDateString('ru-RU')};persist();return last;
 }
 function downloadPDF(){
  const e=calculate();const w=window.open('','_blank');if(!w){alert('Разрешите всплывающие окна для PDF.');return}
- const rows=e.lines.map((r,i)=>'<tr><td>'+(i+1)+'. '+esc(r.name)+'</td><td>'+r.area+' м²</td><td>'+money(r.f)+'</td><td>'+money(r.w)+'</td><td>'+money(r.c)+'</td><td>'+r.reserve+'%</td><td>'+money(r.t)+'</td></tr>').join('');
- w.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Смета на ремонт</title><style>body{font-family:Arial;padding:35px;color:#16324a;max-width:1100px;margin:auto}h1{color:#0d4770}.date{color:#667d90;margin-bottom:24px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #cbd8e0;padding:9px;text-align:left}th{background:#eaf3f8}.total{font-size:26px;font-weight:800;margin-top:24px}.note{color:#667d90;font-size:12px;margin-top:18px}.print{margin-top:25px;padding:12px 18px}@media print{.print{display:none}}</style></head><body><h1>Смета на ремонт</h1><div class="date">Калькулятор ремонта · '+e.date+'</div><table><thead><tr><th>Комната</th><th>Площадь</th><th>Пол</th><th>Стены</th><th>Потолок</th><th>Запас</th><th>Итого</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Общая стоимость: '+money(e.total)+'</div><div class="note">Расчёт ориентировочный и зависит от фактических цен материалов.</div><button class="print" onclick="window.print()">Печать / Сохранить как PDF</button></body></html>');
+ const rows=e.lines.map((r,i)=>'<tr><td>'+(i+1)+'. '+esc(r.name)+'</td><td>'+r.area+' м²</td><td>'+money(r.f)+'</td><td>'+money(r.w)+'</td><td>'+money(r.c)+'</td><td>'+money(r.it)+'</td><td>'+r.reserve+'%</td><td>'+money(r.t)+'</td></tr>').join('');
+ w.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Смета на ремонт</title><style>body{font-family:Arial;padding:35px;color:#16324a;max-width:1100px;margin:auto}h1{color:#0d4770}.date{color:#667d90;margin-bottom:24px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #cbd8e0;padding:9px;text-align:left}th{background:#eaf3f8}.total{font-size:26px;font-weight:800;margin-top:24px}.note{color:#667d90;font-size:12px;margin-top:18px}.print{margin-top:25px;padding:12px 18px}@media print{.print{display:none}}</style></head><body><h1>Смета на ремонт</h1><div class="date">Калькулятор ремонта · '+e.date+'</div><table><thead><tr><th>Комната</th><th>Площадь</th><th>Пол</th><th>Стены</th><th>Потолок</th><th>Работы/материалы</th><th>Запас</th><th>Итого</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Общая стоимость: '+money(e.total)+'</div><div class="note">Расчёт ориентировочный и зависит от фактических цен материалов.</div><button class="print" onclick="window.print()">Печать / Сохранить как PDF</button></body></html>');
  w.document.close();setTimeout(()=>w.print(),500)
 }
 function persist(){
@@ -209,7 +217,7 @@ function persist(){
 function saveEstimate(){saveRoom();calculate();persist();const el=document.getElementById('saveStatus');if(el){el.textContent='✓ Смета сохранена на этом устройстве';setTimeout(()=>el.textContent='',2500)}}
 function loadSavedEstimate(){
  try{const raw=localStorage.getItem('repairCalculatorEstimate');if(!raw){alert('Сохранённой сметы пока нет.');return}const data=JSON.parse(raw);if(!Array.isArray(data.rooms)||!data.rooms.length)throw new Error();rooms=data.rooms;active=Math.min(data.active||0,rooms.length-1);loadRoom();renderRooms();calculate();document.getElementById('calc').scrollIntoView({behavior:'smooth'});}catch(e){alert('Не удалось восстановить смету.')}}
-function newEstimate(){if(!confirm('Начать новую смету? Текущая сохранённая смета останется доступна для восстановления.'))return;rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10}];active=0;loadRoom();renderRooms();calculate();}
+function newEstimate(){if(!confirm('Начать новую смету? Текущая сохранённая смета останется доступна для восстановления.'))return;rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10,items:[]}];active=0;loadRoom();renderRooms();calculate();}
 function resetAll(){rooms=[{name:'Гостиная',area:20,type:'basic',floor:600,walls:450,ceiling:300,reserve:10}];active=0;loadRoom();renderRooms();calculate()}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 loadRoom();renderRooms();calculate();
