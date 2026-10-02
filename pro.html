@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Калькулятор ремонта PRO</title>
+<style>
+:root{--navy:#0d4770;--blue:#1479b8;--orange:#f7931e;--bg:#f4f8fb;--text:#16324a;--muted:#667d90;--line:#dfe9f0}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf7fd,#fff);color:var(--text)}.wrap{max-width:980px;margin:auto;padding:25px 20px 60px}
+a{text-decoration:none;color:var(--navy);font-weight:700}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:45px}.logo{font-size:20px;font-weight:900;color:var(--navy)}.hero{text-align:center}.badge{display:inline-block;background:#fff1df;color:#d87800;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:900;letter-spacing:.8px}.hero h1{font-size:46px;line-height:1.08;margin:15px 0 12px}.hero p{font-size:18px;color:var(--muted);max-width:650px;margin:0 auto 28px}.price{font-size:44px;font-weight:900;color:var(--navy)}.price small{font-size:15px;color:var(--muted)}.card{max-width:620px;margin:28px auto;background:#fff;border:2px solid var(--orange);border-radius:24px;padding:30px;box-shadow:0 15px 45px rgba(18,58,86,.12)}ul{list-style:none;padding:0;margin:22px 0}li{padding:11px 0;border-bottom:1px solid #edf2f5;font-size:15px}li:before{content:"✓";color:var(--orange);font-weight:900;margin-right:10px}.pay{display:block;width:100%;border:0;border-radius:12px;padding:16px;background:var(--orange);color:#fff;font-size:17px;font-weight:900;cursor:pointer}.note{margin-top:15px;color:var(--muted);font-size:12px;text-align:center;line-height:1.5}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:25px}.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}.step b{display:block;margin-bottom:6px}.step span{font-size:13px;color:var(--muted)}@media(max-width:650px){.hero h1{font-size:35px}.steps{grid-template-columns:1fr}.top{margin-bottom:30px}}
+</style></head><body><main class="wrap">
+<div class="top"><a class="logo" href="index.html">🏠 Калькулятор ремонта</a><a href="index.html">← Вернуться к калькулятору</a></div>
+<section class="hero"><span class="badge">РАСШИРЕННАЯ ВЕРСИЯ</span><h1>Калькулятор ремонта PRO</h1><p>Больше возможностей для мастеров и компаний: профессиональные сметы, дополнительные инструменты и удобная работа с заказчиками.</p>
+<div class="card"><div class="price">199 грн <small>/ месяц</small></div><ul>
+<li>Профессиональное оформление сметы</li><li>PDF-смета для клиента</li><li>Расширенные данные исполнителя и объекта</li><li>История и сохранение смет</li><li>Без рекламы</li><li>Доступ к будущим PRO-функциям</li></ul>
+<button class="pay" onclick="startPayment()">Получить PRO →</button>
+<div class="note" id="paymentNote">Оплата будет подключена после настройки платёжного аккаунта.</div></div>
+</section>
+<section class="steps"><div class="step"><b>1. Выберите PRO</b><span>Нажмите кнопку оплаты.</span></div><div class="step"><b>2. Оплатите</b><span>После подключения платёжного сервиса оплата проходит на защищённой странице.</span></div><div class="step"><b>3. Получите доступ</b><span>После подтверждения оплаты PRO активируется.</span></div></section>
+</main>
+<script>
+function startPayment(){
+ const note=document.getElementById('paymentNote');
+ note.textContent='Платёжная ссылка ещё не подключена. Следующий шаг — подключить WayForPay или другой платёжный сервис.';
+}
+</script></body></html>
