@@ -333,9 +333,10 @@ zh:{
 }};
 function changeLanguage(lang){
  const dict=I18N[lang]||I18N.ru;
+ const reverse={};Object.keys(I18N).forEach(l=>Object.entries(I18N[l]).forEach(([k,v])=>{if(v)reverse[v]=k}));
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
- nodes.forEach(n=>{const t=n.nodeValue.trim();if(dict[t])n.nodeValue=n.nodeValue.replace(t,dict[t])});
+ nodes.forEach(n=>{const t=n.nodeValue.trim();const key=reverse[t]||t;if(dict[key]&&dict[key]!==t)n.nodeValue=n.nodeValue.replace(t,dict[key])});
  localStorage.setItem("repairLang",lang);
  document.documentElement.lang=lang==="zh"?"zh":lang;
 }
