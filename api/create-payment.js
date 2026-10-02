@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
   try {
@@ -29,6 +31,5 @@ export default async function handler(req, res) {
   }
 }
 function cryptoSign(privateKey, data) {
-  const crypto = require('crypto');
   return crypto.createHash('sha3-256').update(privateKey + data + privateKey).digest('base64');
 }
