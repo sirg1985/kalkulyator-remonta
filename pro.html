@@ -14,25 +14,17 @@ a{text-decoration:none;color:var(--navy);font-weight:700}.top{display:flex;justi
 <label style="font-size:13px;font-weight:800">Email (необязательно)<input id="proEmail" type="email" placeholder="you@example.com" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
 <label style="font-size:13px;font-weight:800">Телефон (необязательно)<input id="proPhone" type="tel" placeholder="+380..." style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
 </div>
-<button class="pay" onclick="startPayment()">Получить PRO →</button>
-<div class="note" id="paymentNote">После нажатия откроется защищённая страница LiqPay. 199 грн списываются ежемесячно как подписка.</div></div>
+<button class="pay" onclick="startPayment()">Оплатить PRO →</button>
+<div style="margin-top:14px;text-align:left"><label style="font-size:13px;font-weight:800">Код активации PRO<input id="proCode" type="text" placeholder="Введите код после оплаты" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
+<button class="pay" style="margin-top:10px;background:var(--navy)" onclick="activatePro()">Активировать PRO</button></div>
+<div class="note" id="paymentNote">Оплата проходит по защищённой ссылке LiqPay. После подтверждения оплаты введите полученный код активации.</div></div>
 </section>
 <section class="steps"><div class="step"><b>1. Выберите PRO</b><span>Нажмите кнопку оплаты.</span></div><div class="step"><b>2. Оплатите</b><span>После подключения платёжного сервиса оплата проходит на защищённой странице.</span></div><div class="step"><b>3. Получите доступ</b><span>После подтверждения оплаты PRO активируется.</span></div></section>
 </main>
 <script>
-async function startPayment(){
- const note=document.getElementById('paymentNote');
- const email=document.getElementById('proEmail').value.trim();
- const phone=document.getElementById('proPhone').value.trim();
- note.textContent='Создаём защищённую форму LiqPay…';
- try{
-  const res=await fetch('https://YOUR-VERCEL-PROJECT.vercel.app/api/create-pro-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,phone})});
-  const data=await res.json();
-  if(!data||!data.data||!data.signature) throw new Error(data&&data.error||'API недоступен');
-  const form=document.createElement('form');form.method='POST';form.action='https://www.liqpay.ua/api/3/checkout';form.style.display='none';
-  [['data',data.data],['signature',data.signature]].forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;form.appendChild(input)});
-  document.body.appendChild(form);form.submit();
- }catch(e){
-  note.textContent='Платёжный сервер ещё не опубликован. После размещения API на Vercel кнопка начнёт открывать LiqPay.';
- }}
+const PAYMENT_URL='ВСТАВЬТЕ_СЮДА_ССЫЛКУ_LIQPAY';
+const PRO_CODE='PRO-2026-DEMO';
+function startPayment(){const note=document.getElementById('paymentNote');if(PAYMENT_URL.includes('ВСТАВЬТЕ_СЮДА')){note.textContent='Ссылка LiqPay ещё не добавлена. Создайте ссылку на оплату в кабинете LiqPay и вставьте её в код сайта.';return;}window.location.href=PAYMENT_URL;}
+function activatePro(){const code=document.getElementById('proCode').value.trim(),note=document.getElementById('paymentNote');if(code===PRO_CODE){localStorage.setItem('repairCalcPro','1');localStorage.setItem('repairCalcProDate',new Date().toISOString());note.textContent='PRO активирован на этом устройстве.';alert('PRO успешно активирован!');}else note.textContent='Неверный код активации.';}
+if(localStorage.getItem('repairCalcPro')==='1')document.querySelector('.badge').textContent='PRO АКТИВИРОВАН';
 </script></body></html>
