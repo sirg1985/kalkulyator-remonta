@@ -17,14 +17,32 @@ a{text-decoration:none;color:var(--navy);font-weight:700}.top{display:flex;justi
 <button class="pay" onclick="startPayment()">Оплатить PRO →</button>
 <div style="margin-top:14px;text-align:left"><label style="font-size:13px;font-weight:800">Код активации PRO<input id="proCode" type="text" placeholder="Введите код после оплаты" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
 <button class="pay" style="margin-top:10px;background:var(--navy)" onclick="activatePro()">Активировать PRO</button></div>
-<div class="note" id="paymentNote">Оплата проходит по защищённой ссылке LiqPay. После подтверждения оплаты введите полученный код активации.</div></div>
+<div id="paypal-button-container" style="margin-top:18px"></div>
+<div class="note" id="paymentNote">Подписка оформляется через PayPal. Сумма в PayPal задаётся в валюте плана.</div></div>
 </section>
 <section class="steps"><div class="step"><b>1. Выберите PRO</b><span>Нажмите кнопку оплаты.</span></div><div class="step"><b>2. Оплатите</b><span>После подключения платёжного сервиса оплата проходит на защищённой странице.</span></div><div class="step"><b>3. Получите доступ</b><span>После подтверждения оплаты PRO активируется.</span></div></section>
 </main>
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&vault=true&intent=subscription"></script>
 <script>
-const PAYMENT_URL='ВСТАВЬТЕ_СЮДА_ССЫЛКУ_LIQPAY';
-const PRO_CODE='PRO-2026-DEMO';
-function startPayment(){const note=document.getElementById('paymentNote');if(PAYMENT_URL.includes('ВСТАВЬТЕ_СЮДА')){note.textContent='Ссылка LiqPay ещё не добавлена. Создайте ссылку на оплату в кабинете LiqPay и вставьте её в код сайта.';return;}window.location.href=PAYMENT_URL;}
-function activatePro(){const code=document.getElementById('proCode').value.trim(),note=document.getElementById('paymentNote');if(code===PRO_CODE){localStorage.setItem('repairCalcPro','1');localStorage.setItem('repairCalcProDate',new Date().toISOString());note.textContent='PRO активирован на этом устройстве.';alert('PRO успешно активирован!');}else note.textContent='Неверный код активации.';}
+const PAYPAL_PLAN_ID='YOUR_PAYPAL_PLAN_ID';
+function initPayPal(){
+ if(typeof paypal==='undefined')return;
+ paypal.Buttons({
+  style:{shape:'rect',color:'gold',label:'subscribe',layout:'vertical'},
+  createSubscription:function(data,actions){
+   return actions.subscription.create({plan_id:PAYPAL_PLAN_ID});
+  },
+  onApprove:function(data){
+   localStorage.setItem('repairCalcPro','1');
+   localStorage.setItem('repairCalcProDate',new Date().toISOString());
+   document.querySelector('.badge').textContent='PRO АКТИВИРОВАН';
+   document.getElementById('paymentNote').textContent='Подписка PayPal оформлена. PRO активирован на этом устройстве.';
+   alert('PRO успешно активирован! ID подписки: '+data.subscriptionID);
+  },
+  onCancel:function(){document.getElementById('paymentNote').textContent='Оплата отменена.';},
+  onError:function(err){console.error(err);document.getElementById('paymentNote').textContent='Не удалось открыть PayPal. Проверьте Client ID и Plan ID.';}
+ }).render('#paypal-button-container');
+}
+window.addEventListener('load',initPayPal);
 if(localStorage.getItem('repairCalcPro')==='1')document.querySelector('.badge').textContent='PRO АКТИВИРОВАН';
 </script></body></html>
