@@ -316,6 +316,30 @@ function toggleMusic(){const s=document.getElementById("musicSelect");if(musicOn
 function prevMusic(){const s=document.getElementById("musicSelect");const ids=["1","2","3"];let i=ids.indexOf(s.value);if(i<0)i=0;i=(i+ids.length-1)%ids.length;s.value=ids[i];changeMusic(ids[i])}
 function nextMusic(){const s=document.getElementById("musicSelect");const ids=["1","2","3"];let i=ids.indexOf(s.value);if(i<0)i=0;i=(i+1)%ids.length;s.value=ids[i];changeMusic(ids[i])}
 function downloadMusic(){const s=document.getElementById("musicSelect"),id=s&&s.value;if(!id){alert("Сначала выберите трек.");return}const src=musicFiles[id]||musicFiles[1],a=document.createElement("a");a.href=src;a.download=(id==="1"?"praiv-list":id==="2"?"spokoynaya":"energichnaya")+".mp3";document.body.appendChild(a);a.click();a.remove()}
+
+/* Перевод интерфейса */
+const I18N={
+ru:{
+"Калькулятор ремонта":"Калькулятор ремонта","Быстро. Удобно. Бесплатно.":"Быстро. Удобно. Бесплатно.","Калькулятор":"Калькулятор","Тарифы":"Тарифы","Работники":"Работники","Как это работает":"Как это работает","О сервисе":"О сервисе","Скачать PDF":"Скачать PDF","Онлайн-сервис для ремонта":"Онлайн-сервис для ремонта","Рассчитайте стоимость ремонта":"Рассчитайте стоимость ремонта","Бесплатно":"Бесплатно","PRO":"PRO","Получить PRO →":"Получить PRO →","Сохранить смету":"Сохранить смету","Скачать смету":"Скачать смету","История смет":"История смет","Заказчики":"Заказчики","Разместить объявление":"Разместить объявление","Связаться":"Связаться","Нанять":"Нанять","Введите название песни или исполнителя.":"Введите название песни или исполнителя.","Найти":"Найти"
+},
+uk:{
+"Калькулятор ремонта":"Калькулятор ремонту","Быстро. Удобно. Бесплатно.":"Швидко. Зручно. Безкоштовно.","Калькулятор":"Калькулятор","Тарифы":"Тарифи","Работники":"Працівники","Как это работает":"Як це працює","О сервисе":"Про сервіс","Скачать PDF":"Завантажити PDF","Онлайн-сервис для ремонта":"Онлайн-сервіс для ремонту","Рассчитайте стоимость ремонта":"Розрахуйте вартість ремонту","Бесплатно":"Безкоштовно","Получить PRO →":"Отримати PRO →","Сохранить смету":"Зберегти кошторис","Скачать смету":"Завантажити кошторис","История смет":"Історія кошторисів","Заказчики":"Замовники","Разместить объявление":"Розмістити оголошення","Связаться":"Зв'язатися","Нанять":"Найняти","Введите название песни или исполнителя.":"Введіть назву пісні або виконавця.","Найти":"Знайти"
+},
+en:{
+"Калькулятор ремонта":"Repair Calculator","Быстро. Удобно. Бесплатно.":"Fast. Convenient. Free.","Калькулятор":"Calculator","Тарифы":"Plans","Работники":"Workers","Как это работает":"How it works","О сервисе":"About","Скачать PDF":"Download PDF","Онлайн-сервис для ремонта":"Online repair service","Рассчитайте стоимость ремонта":"Calculate your renovation cost","Бесплатно":"Free","Получить PRO →":"Get PRO →","Сохранить смету":"Save estimate","Скачать смету":"Download estimate","История смет":"Estimate history","Заказчики":"Customers","Разместить объявление":"Post an ad","Связаться":"Contact","Нанять":"Hire","Введите название песни или исполнителя.":"Enter a song or artist name.","Найти":"Search"
+},
+zh:{
+"Калькулятор ремонта":"装修计算器","Быстро. Удобно. Бесплатно.":"快速、方便、免费","Калькулятор":"计算器","Тарифы":"套餐","Работники":"工人","Как это работает":"使用方法","О сервисе":"关于服务","Скачать PDF":"下载 PDF","Онлайн-сервис для ремонта":"在线装修服务","Рассчитайте стоимость ремонта":"计算装修费用","Бесплатно":"免费","Получить PRO →":"获取 PRO →","Сохранить смету":"保存预算","Скачать смету":"下载预算","История смет":"预算历史","Заказчики":"客户","Разместить объявление":"发布信息","Связаться":"联系","Нанять":"雇佣","Введите название песни или исполнителя.":"输入歌曲或歌手名称","Найти":"搜索"
+}};
+function changeLanguage(lang){
+ const dict=I18N[lang]||I18N.ru;
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(n=>{const t=n.nodeValue.trim();if(dict[t])n.nodeValue=n.nodeValue.replace(t,dict[t])});
+ localStorage.setItem("repairLang",lang);
+ document.documentElement.lang=lang==="zh"?"zh":lang;
+}
+
 function loadTools(){const l=localStorage.getItem("repairLang")||"ru";document.getElementById("siteLanguage").value=l;const m=localStorage.getItem("repairMusic")||"";document.getElementById("musicSelect").value=m;const v=localStorage.getItem("repairMusicVolume")||"35";document.getElementById("musicVolume").value=v;setMusicVolume(v);changeLanguage(l)}
 
 function toggleChat(){document.getElementById('chatBox').classList.toggle('open');if(document.getElementById('chatBox').classList.contains('open'))setTimeout(()=>document.getElementById('chatInput').focus(),100)}
