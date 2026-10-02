@@ -10,14 +10,29 @@ a{text-decoration:none;color:var(--navy);font-weight:700}.top{display:flex;justi
 <section class="hero"><span class="badge">РАСШИРЕННАЯ ВЕРСИЯ</span><h1>Калькулятор ремонта PRO</h1><p>Больше возможностей для мастеров и компаний: профессиональные сметы, дополнительные инструменты и удобная работа с заказчиками.</p>
 <div class="card"><div class="price">199 грн <small>/ месяц</small></div><ul>
 <li>Профессиональное оформление сметы</li><li>PDF-смета для клиента</li><li>Расширенные данные исполнителя и объекта</li><li>История и сохранение смет</li><li>Без рекламы</li><li>Доступ к будущим PRO-функциям</li></ul>
+<div style="display:grid;gap:10px;margin:18px 0;text-align:left">
+<label style="font-size:13px;font-weight:800">Email (необязательно)<input id="proEmail" type="email" placeholder="you@example.com" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
+<label style="font-size:13px;font-weight:800">Телефон (необязательно)<input id="proPhone" type="tel" placeholder="+380..." style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:6px"></label>
+</div>
 <button class="pay" onclick="startPayment()">Получить PRO →</button>
-<div class="note" id="paymentNote">Оплата будет подключена после настройки платёжного аккаунта.</div></div>
+<div class="note" id="paymentNote">После нажатия откроется защищённая страница LiqPay. 199 грн списываются ежемесячно как подписка.</div></div>
 </section>
 <section class="steps"><div class="step"><b>1. Выберите PRO</b><span>Нажмите кнопку оплаты.</span></div><div class="step"><b>2. Оплатите</b><span>После подключения платёжного сервиса оплата проходит на защищённой странице.</span></div><div class="step"><b>3. Получите доступ</b><span>После подтверждения оплаты PRO активируется.</span></div></section>
 </main>
 <script>
-function startPayment(){
+async function startPayment(){
  const note=document.getElementById('paymentNote');
- note.textContent='Платёжная ссылка ещё не подключена. Следующий шаг — подключить WayForPay или другой платёжный сервис.';
-}
+ const email=document.getElementById('proEmail').value.trim();
+ const phone=document.getElementById('proPhone').value.trim();
+ note.textContent='Создаём защищённую форму LiqPay…';
+ try{
+  const res=await fetch('https://kalkulyator-remonta-api.vercel.app/api/create-pro-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,phone})});
+  const data=await res.json();
+  if(!data||!data.data||!data.signature) throw new Error(data&&data.error||'API недоступен');
+  const form=document.createElement('form');form.method='POST';form.action='https://www.liqpay.ua/api/3/checkout';form.style.display='none';
+  [['data',data.data],['signature',data.signature]].forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;form.appendChild(input)});
+  document.body.appendChild(form);form.submit();
+ }catch(e){
+  note.textContent='Платёжный сервер ещё не опубликован. После размещения API на Vercel кнопка начнёт открывать LiqPay.';
+ }}
 </script></body></html>
