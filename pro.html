@@ -26,7 +26,7 @@ async function startPayment(){
  const phone=document.getElementById('proPhone').value.trim();
  note.textContent='Создаём защищённую форму LiqPay…';
  try{
-  const res=await fetch('https://kalkulyator-remonta-api.vercel.app/api/create-pro-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,phone})});
+  const res=await fetch('https://YOUR-VERCEL-PROJECT.vercel.app/api/create-pro-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,phone})});
   const data=await res.json();
   if(!data||!data.data||!data.signature) throw new Error(data&&data.error||'API недоступен');
   const form=document.createElement('form');form.method='POST';form.action='https://www.liqpay.ua/api/3/checkout';form.style.display='none';
