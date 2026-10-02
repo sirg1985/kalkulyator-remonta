@@ -82,6 +82,10 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 
 /* Тарифы рекламы */
 .ad-pricing{margin-top:22px}.ad-pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.ad-price-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center;box-shadow:var(--shadow);position:relative}.ad-price-card.featured{border:2px solid var(--orange);padding:21px}.ad-price-card h3{margin:4px 0 6px;color:var(--navy);font-size:21px}.ad-price{font-size:28px;font-weight:900;color:var(--navy);margin:8px 0}.ad-price small{font-size:12px;color:var(--muted)}.ad-price-card ul{list-style:none;padding:0;margin:14px 0 18px;color:var(--muted);font-size:13px}.ad-price-card li{padding:5px 0}.ad-buy{width:100%;border:0;border-radius:10px;padding:11px;background:var(--navy);color:#fff;font-weight:800;cursor:pointer}.ad-price-card.featured .ad-buy{background:var(--orange)}.ad-popular{position:absolute;right:14px;top:14px;background:var(--orange);color:#fff;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:900}@media(max-width:700px){.ad-pricing-grid{grid-template-columns:1fr}}
+
+/* Криптооплата */
+.crypto-pay{margin:22px 0;padding:24px;background:linear-gradient(135deg,#0d4770,#1479b8);border-radius:20px;color:#fff;box-shadow:var(--shadow)}
+.crypto-pay h3{margin:0 0 8px;font-size:22px}.crypto-pay p{margin:0 0 16px;opacity:.92;font-size:14px}.crypto-pay-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.crypto-btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:11px;padding:12px 18px;background:#f7931e;color:#fff;font-weight:900;text-decoration:none;cursor:pointer}.crypto-btn.secondary{background:#fff;color:#0d4770}.crypto-note{font-size:11px;opacity:.8;margin-top:10px}
 /* Реклама */
 .ad-section{padding:10px 0 45px}.ad-section .section-title{margin-bottom:18px}.ad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.ad-slot{min-height:150px;background:#fff;border:1px dashed #b9ccd8;border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow)}.ad-slot b{font-size:17px;color:var(--navy)}.ad-slot span{font-size:12px;color:var(--muted);margin:7px 0 13px}.ad-slot a,.ad-btn{display:inline-block;border:0;border-radius:10px;background:var(--orange);color:#fff;padding:10px 16px;text-decoration:none;font-weight:800;cursor:pointer}.ad-badge{font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}.ad-form{margin-top:18px;display:none}.ad-form.open{display:block}.ad-form .grid{margin-top:12px}.ad-note{font-size:12px;color:var(--muted);margin-top:9px}@media(max-width:700px){.ad-grid{grid-template-columns:1fr}}
 </style>
@@ -149,7 +153,7 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <section class="ad-section" id="advertising">
 <div class="container">
 <div class="section-title"><h2>Реклама на сайте</h2><p>Разместите рекламу строительных материалов, услуг, мастеров или магазинов.</p></div>
-<div class="ad-grid">
+<div class="crypto-pay"><h3>₿ Оплата криптовалютой</h3><p>Оплачивайте размещение рекламы и услуги криптовалютой. Поддерживаются Bitcoin, Ethereum, USDT, USDC и другие активы через NOWPayments.</p><div class="crypto-pay-row"><a class="crypto-btn" id="cryptoPayBtn" href="#" onclick="return openCryptoPayment()">₿ Оплатить криптовалютой</a><a class="crypto-btn secondary" href="https://nowpayments.io/" target="_blank" rel="noopener">Как работает оплата</a></div><div class="crypto-note">Платёжная ссылка будет подключена после создания вашего аккаунта NOWPayments.</div></div><div class="ad-grid">
 <div class="ad-slot"><div class="ad-badge">Рекламное место №1</div><b>Ваша реклама здесь</b><span>Видимое место рядом с калькулятором ремонта.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
 <div class="ad-slot"><div class="ad-badge">Рекламное место №2</div><b>Продвигайте свои услуги</b><span>Для мастеров, бригад, магазинов и производителей.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
 <div class="ad-slot"><div class="ad-badge">Рекламное место №3</div><b>Привлекайте клиентов</b><span>Баннер, ссылка или специальное предложение.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
@@ -357,6 +361,14 @@ function downloadMusic(){const s=document.getElementById("musicSelect"),id=s&&s.
 
 function selectAdPlan(plan){const term=document.getElementById('advertiserTerm');if(term){const opts=[...term.options];const days=plan.split(' ')[0];const match=opts.find(o=>o.value===days+' дней');if(match)term.value=match.value}const d=document.getElementById('advertiserDescription');if(d){const old=d.value.trim();d.value=old?old+'\nТариф: '+plan:'Тариф: '+plan}openAdForm()}
 
+
+const CRYPTO_PAYMENT_LINK='';
+function openCryptoPayment(){
+  if(CRYPTO_PAYMENT_LINK){window.open(CRYPTO_PAYMENT_LINK,'_blank','noopener');return false}
+  alert('Криптооплата уже добавлена на сайт. Осталось создать Payment Link в NOWPayments и вставить его в CRYPTO_PAYMENT_LINK.');
+  window.open('https://nowpayments.io/','_blank','noopener');
+  return false
+}
 /* Рекламные заявки */
 function openAdForm(){const f=document.getElementById('adForm');if(f){f.classList.add('open');f.scrollIntoView({behavior:'smooth',block:'center'})}}
 function closeAdForm(){const f=document.getElementById('adForm');if(f)f.classList.remove('open')}
