@@ -22,27 +22,36 @@ a{text-decoration:none;color:var(--navy);font-weight:700}.top{display:flex;justi
 </section>
 <section class="steps"><div class="step"><b>1. Выберите PRO</b><span>Нажмите кнопку оплаты.</span></div><div class="step"><b>2. Оплатите</b><span>После подключения платёжного сервиса оплата проходит на защищённой странице.</span></div><div class="step"><b>3. Получите доступ</b><span>После подтверждения оплаты PRO активируется.</span></div></section>
 </main>
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&vault=true&intent=subscription"></script>
+
 <script>
 const PAYPAL_PLAN_ID='YOUR_PAYPAL_PLAN_ID';
+function startPayment(){
+ const note=document.getElementById('paymentNote');
+ if(PAYPAL_PLAN_ID==='YOUR_PAYPAL_PLAN_ID'){
+   if(note)note.textContent='PayPal для PRO пока не подключён. После создания PayPal-плана сюда будет добавлена рабочая кнопка оплаты.';
+   document.getElementById('paypal-button-container')?.scrollIntoView({behavior:'smooth',block:'center'});
+   return;
+ }
+ initPayPal();
+}
+function activatePro(){
+ const note=document.getElementById('paymentNote');
+ if(note)note.textContent='Код активации будет проверяться после подключения платёжной системы.';
+}
 function initPayPal(){
  if(typeof paypal==='undefined')return;
  paypal.Buttons({
   style:{shape:'rect',color:'gold',label:'subscribe',layout:'vertical'},
-  createSubscription:function(data,actions){
-   return actions.subscription.create({plan_id:PAYPAL_PLAN_ID});
-  },
+  createSubscription:function(data,actions){return actions.subscription.create({plan_id:PAYPAL_PLAN_ID});},
   onApprove:function(data){
    localStorage.setItem('repairCalcPro','1');
    localStorage.setItem('repairCalcProDate',new Date().toISOString());
    document.querySelector('.badge').textContent='PRO АКТИВИРОВАН';
    document.getElementById('paymentNote').textContent='Подписка PayPal оформлена. PRO активирован на этом устройстве.';
-   alert('PRO успешно активирован! ID подписки: '+data.subscriptionID);
   },
   onCancel:function(){document.getElementById('paymentNote').textContent='Оплата отменена.';},
-  onError:function(err){console.error(err);document.getElementById('paymentNote').textContent='Не удалось открыть PayPal. Проверьте Client ID и Plan ID.';}
+  onError:function(err){console.error(err);document.getElementById('paymentNote').textContent='Не удалось открыть PayPal.';}
  }).render('#paypal-button-container');
 }
-window.addEventListener('load',initPayPal);
 if(localStorage.getItem('repairCalcPro')==='1')document.querySelector('.badge').textContent='PRO АКТИВИРОВАН';
 </script></body></html>
