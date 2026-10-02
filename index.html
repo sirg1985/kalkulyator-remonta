@@ -79,6 +79,9 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 .music-search-title{font-size:12px;font-weight:900;color:var(--navy);margin-bottom:7px}
 .music-search-row{display:flex;gap:6px}.music-search-row input{padding:8px;font-size:12px}.music-search-row button{border:0;border-radius:8px;background:var(--navy);color:#fff;padding:0 10px;font-weight:800}
 .music-search-links{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.music-search-links a{font-size:11px;text-decoration:none;background:#eaf5fb;color:var(--navy);border-radius:7px;padding:6px 7px;font-weight:800}
+
+/* Реклама */
+.ad-section{padding:10px 0 45px}.ad-section .section-title{margin-bottom:18px}.ad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.ad-slot{min-height:150px;background:#fff;border:1px dashed #b9ccd8;border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow)}.ad-slot b{font-size:17px;color:var(--navy)}.ad-slot span{font-size:12px;color:var(--muted);margin:7px 0 13px}.ad-slot a,.ad-btn{display:inline-block;border:0;border-radius:10px;background:var(--orange);color:#fff;padding:10px 16px;text-decoration:none;font-weight:800;cursor:pointer}.ad-badge{font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}.ad-form{margin-top:18px;display:none}.ad-form.open{display:block}.ad-form .grid{margin-top:12px}.ad-note{font-size:12px;color:var(--muted);margin-top:9px}@media(max-width:700px){.ad-grid{grid-template-columns:1fr}}
 </style>
 <style id="music-player-style">
 .music-player{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(20,25,35,.72);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
@@ -140,6 +143,24 @@ footer{background:var(--navy2);color:#d7e7f0;padding:38px 0 20px}.foot{display:f
 <div class="hero-actions" style="margin-top:14px"><button class="primary" type="button" onclick="saveWorkerAd()">Опубликовать</button><button class="secondary" type="button" onclick="closeWorkerForm()">Отмена</button></div>
 </div>
 </div></section>
+
+<section class="ad-section" id="advertising">
+<div class="container">
+<div class="section-title"><h2>Реклама на сайте</h2><p>Разместите рекламу строительных материалов, услуг, мастеров или магазинов.</p></div>
+<div class="ad-grid">
+<div class="ad-slot"><div class="ad-badge">Рекламное место №1</div><b>Ваша реклама здесь</b><span>Видимое место рядом с калькулятором ремонта.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
+<div class="ad-slot"><div class="ad-badge">Рекламное место №2</div><b>Продвигайте свои услуги</b><span>Для мастеров, бригад, магазинов и производителей.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
+<div class="ad-slot"><div class="ad-badge">Рекламное место №3</div><b>Привлекайте клиентов</b><span>Баннер, ссылка или специальное предложение.</span><button class="ad-btn" type="button" onclick="openAdForm()">Разместить рекламу</button></div>
+</div>
+<div id="adForm" class="ad-form panel">
+<div class="panel-title">Заявка на размещение рекламы</div>
+<div class="grid"><div><label>Компания / имя</label><input id="advertiserName" placeholder="Название компании"></div><div><label>Телефон</label><input id="advertiserPhone" placeholder="+380..."></div><div><label>Email</label><input id="advertiserEmail" type="email" placeholder="email@example.com"></div><div><label>Ссылка на сайт</label><input id="advertiserUrl" placeholder="https://..."></div><div><label>Формат</label><select id="advertiserFormat"><option>Баннер</option><option>Текстовая реклама</option><option>Реклама услуги</option><option>Реклама магазина</option></select></div><div><label>Желаемый срок</label><select id="advertiserTerm"><option>7 дней</option><option>30 дней</option><option>90 дней</option><option>Другое</option></select></div></div>
+<label style="margin-top:14px">Описание рекламы</label><input id="advertiserDescription" placeholder="Что хотите рекламировать?">
+<div class="hero-actions" style="margin-top:14px"><button class="primary" type="button" onclick="saveAdvertisingRequest()">Отправить заявку</button><button class="secondary" type="button" onclick="closeAdForm()">Закрыть</button></div>
+<div id="adFormStatus" class="ad-note"></div>
+</div>
+</div>
+</section>
 
 <section class="calculator" id="calc">
 <div class="container">
@@ -325,6 +346,11 @@ function toggleMusic(){const s=document.getElementById("musicSelect");if(musicOn
 function prevMusic(){const s=document.getElementById("musicSelect");const ids=["1","2","3"];let i=ids.indexOf(s.value);if(i<0)i=0;i=(i+ids.length-1)%ids.length;s.value=ids[i];changeMusic(ids[i])}
 function nextMusic(){const s=document.getElementById("musicSelect");const ids=["1","2","3"];let i=ids.indexOf(s.value);if(i<0)i=0;i=(i+1)%ids.length;s.value=ids[i];changeMusic(ids[i])}
 function downloadMusic(){const s=document.getElementById("musicSelect"),id=s&&s.value;if(!id){alert("Сначала выберите трек.");return}const src=musicFiles[id]||musicFiles[1],a=document.createElement("a");a.href=src;a.download=(id==="1"?"praiv-list":id==="2"?"spokoynaya":"energichnaya")+".mp3";document.body.appendChild(a);a.click();a.remove()}
+
+/* Рекламные заявки */
+function openAdForm(){const f=document.getElementById('adForm');if(f){f.classList.add('open');f.scrollIntoView({behavior:'smooth',block:'center'})}}
+function closeAdForm(){const f=document.getElementById('adForm');if(f)f.classList.remove('open')}
+function saveAdvertisingRequest(){const req={name:document.getElementById('advertiserName').value.trim(),phone:document.getElementById('advertiserPhone').value.trim(),email:document.getElementById('advertiserEmail').value.trim(),url:document.getElementById('advertiserUrl').value.trim(),format:document.getElementById('advertiserFormat').value,term:document.getElementById('advertiserTerm').value,description:document.getElementById('advertiserDescription').value.trim(),createdAt:new Date().toISOString()};if(!req.name||!req.phone||!req.email){alert('Заполните название, телефон и email.');return}const list=JSON.parse(localStorage.getItem('repairAdvertisingRequests')||'[]');list.unshift(req);localStorage.setItem('repairAdvertisingRequests',JSON.stringify(list.slice(0,20)));const s=document.getElementById('adFormStatus');if(s)s.textContent='Заявка сохранена. Для приема заявок от всех посетителей следующим шагом подключим форму к вашему email или CRM.';setTimeout(()=>{closeAdForm()},3500)}
 
 /* Перевод интерфейса */
 const I18N={
